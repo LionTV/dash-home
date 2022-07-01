@@ -1,8 +1,12 @@
 <script>
 	import { createEventDispatcher, onDestroy } from 'svelte';
 
+	let comp;
 	const dispatch = createEventDispatcher();
-	const close = () => dispatch('close');
+	export const close = () => {
+		//save data from modal
+		dispatch('close');
+	};
 
 	// @ts-ignore
 	let modal;
@@ -36,14 +40,12 @@
 
 <div class="modal-background" on:click={close}></div>
 
-<div class="modal" role="dialog" aria-modal="true" bind:this={modal}>
+<div class="modal rounded" role="dialog" aria-modal="true" bind:this={modal}>
 	<slot name="header"></slot>
 	<hr>
 	<slot></slot>
 	<hr>
-
-	<!-- svelte-ignore a11y-autofocus -->
-	<button class="text-white" autofocus on:click={close}>Schließen</button>
+	<slot name="footer"></slot>
 </div>
 
 <style>
@@ -68,10 +70,5 @@
 		padding: 1em;
 		border-radius: 0.2em;
 		background: rgb(30, 41, 59);
-	}
-
-	button {
-		display: block;
-		outline: none;
 	}
 </style>

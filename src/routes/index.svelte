@@ -1,14 +1,37 @@
 <script>
-  import Container from "../components/container.svelte";
   import Weather from "../components/Weather.svelte";
   import Modal from "../components/Modal.svelte";
   import { browser } from "$app/env";
+  import Account from "../components/Account.svelte";
+  import Todos from "../components/Todos.svelte";
+  import Footer from "../components/Footer.svelte";
 
   let showModal = false;
   let darkmode = true;
   let storage;
+  let standort = "Berlin";
+  let bundesland = "Brandenburg";
+
   if (browser) {
     storage = window.localStorage;
+
+    //city
+    if (storage.getItem("standort") === null) {
+      storage.setItem("standort", "Berlin");
+    } else {
+      //@ts-ignore
+      standort = storage.getItem("standort");
+    }
+
+    //state
+    if (storage.getItem("bundesland") === null) {
+      storage.setItem("bundesland", "Brandenburg");
+    } else {
+      //@ts-ignore
+      bundesland = storage.getItem("bundesland");
+    }
+
+    //darkmode
     if (storage.getItem("darkmode") === null) {
       storage.setItem("darkmode", "true");
     }else if (storage.getItem("darkmode") === "true") {
@@ -38,45 +61,67 @@
   time()
   setInterval(time, 1000);
 
+  function changecity() {
+    let st = window.localStorage;
+    if (bundesland == "") {
+      bundesland = "...";
+    }
+    st.setItem("standort", standort);
+    st.setItem("bundesland", bundesland);
+    window.location.reload();
+  }
+
 </script>
 
-<div class="bg-slate-600 flex h-16 rounded">
+<div id="main">
+  <div class="bg-slate-600 flex h-16 rounded">
     <p class="my-auto border-b-2 border-indigo-900 mx-4 hover:cursor-pointer hover:text-slate-400">Dashboard</p>
-    <p on:click="{() => showModal = true}" class="my-auto mx-4 hover:cursor-pointer hover:text-slate-400 hover:opacity-80" id="settings">Settings</p>
-    <div class="mt-4">
-      <label for="toggleB" class="flex items-center cursor-pointer ml-6">
-        <div class="relative">
-          {#if darkmode === true}
-            <input checked on:click="{() => toggle()}" type="checkbox" id="toggleB" class="sr-only">
-              <div class="block bg-slate-800 w-14 h-8 rounded-full"></div>
-            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
-          {:else}
-            <input on:click="{() => toggle()}" type="checkbox" id="toggleB" class="sr-only">
-              <div class="block bg-slate-800 w-14 h-8 rounded-full"></div>
-            <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
-          {/if}
-          </div>
-      </label>
-    </div>
-    <p class="my-auto mx-2 font-bold">{timenow}</p>
+      <p on:click="{() => showModal = true}" class="my-auto mx-4 hover:cursor-pointer hover:text-slate-400 hover:opacity-80" id="settings">Settings</p>
+      <p class="my-auto ml-auto mr-2 float-right font-bold">{timenow}</p>
+  </div>
+  <div id="content">
+    <Weather ort={standort} bundesland={bundesland}/>
+    <Todos />
+    <Account />
+  </div>
+
+  <Footer />
 </div>
 
-<Weather />
-
-<Container>
-</Container>
 
 {#if showModal}
-<Modal on:close="{() => showModal = false}">
-    <h1 slot="header" class="text-red-600 font-bold">Coming soon...</h1>
-    <p class="my-4 ">Ist in Arbeit. Schau später nochmal vorbei...</p>
-</Modal>
+  <Modal on:close="{() => showModal = false}">
+    <h1 slot="header" class="text-white font-bold text-xl">Settings</h1>
+    <p class="text-gray-400 font-semibold mt-2">Standort*</p>
+    <input autocomplete="off" bind:value={standort} autocorrect="off" type="text" placeholder="Ort..." id="changecity" class="mt-1 mb-4 text-white bg-transparent ">
+    <p class="text-gray-400 font-semibold">Bundesland <em>(optional)</em></p>
+    <input autocomplete="off" bind:value={bundesland} autocorrect="off" type="text" placeholder="Bundesland..." id="changecity" class="mt-1 mb-4 text-white bg-transparent ">
+    <div class="flex justify-between">
+      <p class="text-white font-semibold mt-2">Darkmode</p>
+      <div class="mt-2 mb-4">
+        <label for="toggleB" class="flex items-center cursor-pointer">
+          <div class="relative">
+            {#if darkmode === true}
+              <input checked on:click="{() => toggle()}" type="checkbox" id="toggleB" class="sr-only">
+                <div class="block bg-slate-500 w-14 h-8 rounded-full"></div>
+              <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+            {:else}
+              <input on:click="{() => toggle()}" type="checkbox" id="toggleB" class="sr-only">
+                <div class="block bg-slate-500 w-14 h-8 rounded-full"></div>
+              <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+            {/if}
+            </div>
+        </label>
+      </div>
+    </div>
+    <button on:click={changecity} slot="footer" id="closebutton" class="text-white bg-gray-500 mt-2 rounded">Schließen</button>
+  </Modal>
 {/if}
 
 <style>
   :global(body.light-mode) {
         background-color: #ffffff;
-        color: #0084f6;
+        color: white;
         transition: background-color 0.3s;
   }
   :global(body) {
@@ -93,5 +138,26 @@
   }
   input {
     outline: none;
+  }
+  #changecity {
+    border: 1px solid gray;
+    padding: 4px;
+    width: 100%;
+  }
+
+  #closebutton {
+		display: block;
+		outline: none;
+		padding: 4px;
+	}
+
+  #main {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+  }
+
+  #content {
+    flex: 1;
   }
 </style>

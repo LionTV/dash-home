@@ -3,6 +3,18 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-    overflow: hidden; /* Hide scrollbars */
+/* @media (min-device-width: 1200px) {
+    ::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+@media (max-device-width: 218px) and (max-device-height: 281px) { 
+    body {
+        overflow: scroll;
+    }
+} */
+
+::-webkit-scrollbar {
+    display: none;
 }

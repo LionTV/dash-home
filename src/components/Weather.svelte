@@ -1,58 +1,76 @@
 <script>
-    import Container from "./container.svelte";
-  
-    let weatherpng = "";
-    let weatherDayTwoPng = "";
-    let weatherDayThreePng = "";
-    let temp  = 0;
-    let tempDayTwo = 0;
-    let tempDayThree = 0;
-    let date = "";
+  import { browser } from "$app/env";
+  import Container from "./Container.svelte";
 
-    async function fetchStatus() {
-      let res;
-      let response;
-      try {
-        response = await fetch("https://api.weatherapi.com/v1/forecast.json?key=035c03fe0d4f46f7b90105115221806&q=Kausen&days=3&aqi=no&alerts=no&hourly=no&hourly_by_zone=no&lang=de&units=m");
-        res = await response.json();
-        
-        //now
-        temp = res["current"]["temp_c"];
-        weatherpng = res["current"]["condition"]["icon"];
+  let weatherpng = "";
+  let weatherDayTwoPng = "";
+  let weatherDayThreePng = "";
+  let temp  = 0;
+  let tempDayTwo = 0;
+  let tempDayThree = 0;
+  let date = "";
+  export let ort = "";
+  export let bundesland = "";
 
-        //day two
-        tempDayTwo = res["forecast"]["forecastday"][1]["day"]["maxtemp_c"];
-        weatherDayTwoPng = res["forecast"]["forecastday"][1]["day"]["condition"]["icon"];
-      
-        //day three
-        tempDayThree = res["forecast"]["forecastday"][2]["day"]["maxtemp_c"];
-        weatherDayThreePng = res["forecast"]["forecastday"][2]["day"]["condition"]["icon"];
-        date = res["forecast"]["forecastday"][2]["date"];
-      } catch {
-        response = await fetch("https://api.weatherapi.com/v1/forecast.json?key=035c03fe0d4f46f7b90105115221806&q=Kausen&days=3&aqi=no");
-        res = await response.json();
-        
-        //now
-        temp = res["current"]["temp_c"];
-        weatherpng = res["current"]["condition"]["icon"];
-
-        //day two
-        tempDayTwo = res["forecast"]["forecastday"][1]["day"]["maxtemp_c"];
-        weatherDayTwoPng = res["forecast"]["forecastday"][1]["day"]["condition"]["icon"];
-      
-        //day three
-        tempDayThree = res["forecast"]["forecastday"][2]["day"]["maxtemp_c"];
-        weatherDayThreePng = res["forecast"]["forecastday"][2]["day"]["condition"]["icon"];
-        date = res["forecast"]["forecastday"][2]["date"];
-      }
+  if (browser) {
+    let storage = window.localStorage;
+    if (storage.getItem("standort") === null) {
+      storage.setItem("standort", "Berlin");
+    } else {
+      //@ts-ignore
+      ort = storage.getItem("standort");
     }
-    fetchStatus();
+
+    if (storage.getItem("bundesland") === null) {
+      storage.setItem("bundesland", "Brandenburg");
+    } else {
+      //@ts-ignore
+      bundesland = storage.getItem("bundesland");
+    }
+  }
+  async function fetchStatus() {
+    let res;
+    let response;
+    try {
+      response = await fetch("https://api.weatherapi.com/v1/forecast.json?key=035c03fe0d4f46f7b90105115221806&q=" + ort + "&days=3&aqi=no&alerts=no&hourly=no&hourly_by_zone=no&lang=de&units=m");
+      res = await response.json();
+      
+      //now
+      temp = res["current"]["temp_c"];
+      weatherpng = res["current"]["condition"]["icon"];
+
+      //day two
+      tempDayTwo = res["forecast"]["forecastday"][1]["day"]["maxtemp_c"];
+      weatherDayTwoPng = res["forecast"]["forecastday"][1]["day"]["condition"]["icon"];
+    
+      //day three
+      tempDayThree = res["forecast"]["forecastday"][2]["day"]["maxtemp_c"];
+      weatherDayThreePng = res["forecast"]["forecastday"][2]["day"]["condition"]["icon"];
+      date = res["forecast"]["forecastday"][2]["date"];
+    } catch {
+      response = await fetch("https://api.weatherapi.com/v1/forecast.json?key=035c03fe0d4f46f7b90105115221806&q=" + ort + "&days=3&aqi=no");
+      res = await response.json();
+      
+      //now
+      temp = res["current"]["temp_c"];
+      weatherpng = res["current"]["condition"]["icon"];
+
+      //day two
+      tempDayTwo = res["forecast"]["forecastday"][1]["day"]["maxtemp_c"];
+      weatherDayTwoPng = res["forecast"]["forecastday"][1]["day"]["condition"]["icon"];
+    
+      //day three
+      tempDayThree = res["forecast"]["forecastday"][2]["day"]["maxtemp_c"];
+      weatherDayThreePng = res["forecast"]["forecastday"][2]["day"]["condition"]["icon"];
+      date = res["forecast"]["forecastday"][2]["date"];
+    }
+  }
+  fetchStatus();
 </script>
 
 <Container>
   <h1 class="font-bold m-4 text-xl">Wetter</h1>
-  <p class="mt-2 ml-4 mb-4"><em>Kausen, Rheinland-Pfalz</em></p>
-  <slot></slot>
+  <p class="mt-2 ml-4 mb-4"><em>{ort + ", " + bundesland}</em></p>
   <div class="float-left bg-gray-600 w-20 ml-4 mt-8 items-center text-center justify-center rounded">
     <p class="font-bold">Heute</p>
     <img class="ml-2" src={weatherpng} alt="">
