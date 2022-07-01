@@ -82,7 +82,6 @@
   <div id="content">
     <Weather ort={standort} bundesland={bundesland}/>
     <Todos />
-    <Account />
   </div>
 
   <Footer />
