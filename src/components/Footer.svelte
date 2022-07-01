@@ -7,7 +7,7 @@
         },
         {
             title: "Github",
-            link: "https://github.com/LionTV/",
+            link: "https://github.com/LionTV/dash-home",
         }
     ]
 </script>
