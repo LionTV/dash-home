@@ -54,7 +54,7 @@
         {#if togglebutton === true}
             <div class="flex justify-between" transition:slide>
                 <form action="javascript:void(0);" class="inline-flex w-full">
-                    <input bind:value={newItem} class="border-2 text-lg border-slate-800 rounded-lg p-2 w-full ml-4 h-16 text-black outline-none" type="text" placeholder="Add todo">
+                    <input bind:value={newItem} class="border-2 text-lg bg-gray-600 border-slate-800 rounded-lg p-2 w-full ml-4 h-16 text-white outline-none" type="text" placeholder="Add todo">
                     <button on:click={addToList} class="float-leftht mb-2 rounded-lg mr-4 ml-1 bg-gray-600 hover:cursor-pointer hover:bg-gray-700 h-16 pl-2 pr-2 w-20 font-bold ">Add</button>
                 </form>
             </div>

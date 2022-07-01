@@ -88,7 +88,6 @@
   <Footer />
 </div>
 
-
 {#if showModal}
   <Modal on:close="{() => showModal = false}">
     <h1 slot="header" class="text-white font-bold text-xl">Settings</h1>
